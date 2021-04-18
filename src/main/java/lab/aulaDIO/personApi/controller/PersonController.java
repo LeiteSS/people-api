@@ -2,6 +2,7 @@ package lab.aulaDIO.personApi.controller;
 
 import lab.aulaDIO.personApi.dto.request.PersonDTO;
 import lab.aulaDIO.personApi.dto.response.MessageResponseDTO;
+import lab.aulaDIO.personApi.exception.PersonNotFoundException;
 import lab.aulaDIO.personApi.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,5 +40,10 @@ public class PersonController {
     @GetMapping
     public List<PersonDTO> listAll() {
         return personService.listAll();
+    }
+
+    @GetMapping("/{id}")
+    public PersonDTO findById(@PathVariable Long id) throws PersonNotFoundException {
+        return personService.findById(id);
     }
 }
