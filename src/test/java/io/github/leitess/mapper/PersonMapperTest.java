@@ -1,10 +1,11 @@
 package io.github.leitess.mapper;
 
-import io.github.leitess.dto.request.PersonDTO;
-import io.github.leitess.dto.request.PhoneDTO;
 import io.github.leitess.entity.Person;
 import io.github.leitess.entity.Phone;
+import io.github.leitess.resource.dto.request.PersonDTO;
+import io.github.leitess.resource.dto.request.PhoneDTO;
 import io.github.leitess.utils.PersonUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,7 +30,7 @@ public class PersonMapperTest {
         Phone phone = person.getPhones().get(0);
         PhoneDTO phoneDTO = personDTO.getPhones().get(0);
 
-        assertEquals(phoneDTO.getType(), phone.getType());
+        Assertions.assertEquals(phoneDTO.getType(), phone.getType());
         assertEquals(phoneDTO.getNumber(), phone.getNumber());
     }
 
@@ -45,7 +46,7 @@ public class PersonMapperTest {
         Phone phone = person.getPhones().get(0);
         PhoneDTO phoneDTO = personDTO.getPhones().get(0);
 
-        assertEquals(phone.getType(), phoneDTO.getType());
+        Assertions.assertEquals(phone.getType(), phoneDTO.getType());
         assertEquals(phone.getNumber(), phoneDTO.getNumber());
     }
 }

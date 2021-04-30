@@ -1,7 +1,7 @@
 package io.github.leitess.resource;
 
-import io.github.leitess.dto.request.PersonDTO;
-import io.github.leitess.dto.response.MessageResponseDTO;
+import io.github.leitess.resource.dto.request.PersonDTO;
+import io.github.leitess.resource.dto.response.MessageResponseDTO;
 import io.github.leitess.exception.PersonNotFoundException;
 import io.github.leitess.service.PersonService;
 import lombok.AllArgsConstructor;
@@ -21,35 +21,39 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/people")
+@RequestMapping("/api/v1")
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class PersonResource {
+public class PersonResource implements PersonResourceDocs{
 
-    private PersonService personService;
+    private final PersonService personService;
 
-    @PostMapping
+    @PostMapping("/people")
     @ResponseStatus(HttpStatus.CREATED)
     public MessageResponseDTO createPerson(@RequestBody @Valid PersonDTO personDTO) {
-
         return personService.createPerson(personDTO);
     }
 
-    @GetMapping
+    @GetMapping("/people/firstName/{firstName}")
+    public PersonDTO findByFirstName(@PathVariable String firstName) throws PersonNotFoundException {
+        return personService.findByFirstName(firstName);
+    }
+
+    @GetMapping("/people/lastName/{lastName}")
+    public PersonDTO findByLastName(@PathVariable String lastName) throws PersonNotFoundException {
+        return personService.findByLastName(lastName);
+    }
+
+    @GetMapping("/people")
     public List<PersonDTO> listAll() {
         return personService.listAll();
     }
 
-    @GetMapping("/{id}")
-    public PersonDTO findById(@PathVariable Long id) throws PersonNotFoundException {
-        return personService.findById(id);
-    }
-
-    @PutMapping("/{id}")
+    @PutMapping("/people/{id}")
     public MessageResponseDTO updateById(@PathVariable Long id, @RequestBody @Valid PersonDTO personDTO) throws PersonNotFoundException {
         return personService.updateById(id, personDTO);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/people/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable Long id) throws PersonNotFoundException {
         personService.deleteById(id);

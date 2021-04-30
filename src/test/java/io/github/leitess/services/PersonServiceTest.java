@@ -1,12 +1,13 @@
 package io.github.leitess.services;
 
+import io.github.leitess.entity.Person;
 import io.github.leitess.exception.PersonNotFoundException;
 import io.github.leitess.mapper.PersonMapper;
-import io.github.leitess.dto.request.PersonDTO;
-import io.github.leitess.dto.response.MessageResponseDTO;
-import io.github.leitess.entity.Person;
+import io.github.leitess.resource.dto.request.PersonDTO;
+import io.github.leitess.resource.dto.response.MessageResponseDTO;
 import io.github.leitess.repository.PersonRepository;
 import io.github.leitess.service.PersonService;
+import io.github.leitess.utils.PersonUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,8 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static io.github.leitess.utils.PersonUtils.createFakeDTO;
-import static io.github.leitess.utils.PersonUtils.createFakeEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -42,8 +41,8 @@ public class PersonServiceTest {
     @Test
     void testGivenPersonDTOThenReturnSuccessSavedMessage() {
 //        given
-        PersonDTO personDTO = createFakeDTO();
-        Person expectedSavedPerson = createFakeEntity();
+        PersonDTO personDTO = PersonUtils.createFakeDTO();
+        Person expectedSavedPerson = PersonUtils.createFakeEntity();
 //        when
         when(personMapper.toModel(personDTO)).thenReturn(expectedSavedPerson);
         when(personRepository.save(any(Person.class))).thenReturn(expectedSavedPerson);
@@ -56,14 +55,14 @@ public class PersonServiceTest {
     @Test
     void testGivenValidPersonIdThenReturnThisPerson() throws PersonNotFoundException {
 //        given
-        PersonDTO expectedPersonDTO = createFakeDTO();
-        Person expectedSavedPerson = createFakeEntity();
+        PersonDTO expectedPersonDTO = PersonUtils.createFakeDTO();
+        Person expectedSavedPerson = PersonUtils.createFakeEntity();
         expectedPersonDTO.setId(expectedSavedPerson.getId());
 //        when
         when(personRepository.findById(expectedSavedPerson.getId())).thenReturn(Optional.of(expectedSavedPerson));
         when(personMapper.toDTO(expectedSavedPerson)).thenReturn(expectedPersonDTO);
 
-        PersonDTO personDTO = personService.findById(expectedSavedPerson.getId());
+        PersonDTO personDTO = personService.findByFirstName(expectedSavedPerson.getFirstName());
 //        then
         assertEquals(expectedPersonDTO, personDTO);
 
@@ -74,19 +73,19 @@ public class PersonServiceTest {
     @Test
     void testGivenInvalidPersonIdThenThrowException() {
 //        given
-        var invalidPersonId = 1L;
+        var invalidPersonName = "Silas";
 //        when
-        when(personRepository.findById(invalidPersonId))
+        when(personRepository.findByFirstName(invalidPersonName))
                 .thenReturn(Optional.ofNullable(any(Person.class)));
 //        then
-        assertThrows(PersonNotFoundException.class, () -> personService.findById(invalidPersonId));
+        assertThrows(PersonNotFoundException.class, () -> personService.findByFirstName(invalidPersonName));
     }
 
     @Test
     void testGivenNoDataThenReturnAllPeopleRegistered() {
 //        given
-        List<Person> expectedRegisteredPeople = Collections.singletonList(createFakeEntity());
-        PersonDTO personDTO = createFakeDTO();
+        List<Person> expectedRegisteredPeople = Collections.singletonList(PersonUtils.createFakeEntity());
+        PersonDTO personDTO = PersonUtils.createFakeDTO();
 //        when
         when(personRepository.findAll()).thenReturn(expectedRegisteredPeople);
         when(personMapper.toDTO(any(Person.class))).thenReturn(personDTO);
@@ -102,14 +101,14 @@ public class PersonServiceTest {
 //        given
         var updatedPersonId = 2L;
 
-        PersonDTO updatePersonDTORequest = createFakeDTO();
+        PersonDTO updatePersonDTORequest = PersonUtils.createFakeDTO();
         updatePersonDTORequest.setId(updatedPersonId);
         updatePersonDTORequest.setLastName("Leite updated");
 
-        Person expectedPersonToUpdate = createFakeEntity();
+        Person expectedPersonToUpdate = PersonUtils.createFakeEntity();
         expectedPersonToUpdate.setId(updatedPersonId);
 
-        Person expectedPersonUpdated = createFakeEntity();
+        Person expectedPersonUpdated = PersonUtils.createFakeEntity();
         expectedPersonUpdated.setId(updatedPersonId);
         expectedPersonToUpdate.setLastName(updatePersonDTORequest.getLastName());
 //        when
@@ -127,7 +126,7 @@ public class PersonServiceTest {
 //        given
         var invalidPersonId = 1L;
 
-        PersonDTO updatePersonDTORequest = createFakeDTO();
+        PersonDTO updatePersonDTORequest = PersonUtils.createFakeDTO();
         updatePersonDTORequest.setId(invalidPersonId);
         updatePersonDTORequest.setLastName("Leite updated");
 
@@ -142,7 +141,7 @@ public class PersonServiceTest {
     void testGivenValidPersonIdThenReturnSuccesOnDelete() throws PersonNotFoundException {
 //        given
         var deletedPersonId = 1L;
-        Person expectedPersonToDelete = createFakeEntity();
+        Person expectedPersonToDelete = PersonUtils.createFakeEntity();
 //        when
         when(personRepository.findById(deletedPersonId)).thenReturn(Optional.of(expectedPersonToDelete));
         personService.deleteById(deletedPersonId);

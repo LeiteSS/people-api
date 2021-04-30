@@ -1,4 +1,4 @@
-package io.github.leitess.dto.request;
+package io.github.leitess.resource.dto.request;
 
 import io.github.leitess.entity.enums.PhoneType;
 import lombok.AllArgsConstructor;

@@ -1,7 +1,7 @@
 package io.github.leitess.mapper;
 
-import io.github.leitess.dto.request.PersonDTO;
 import io.github.leitess.entity.Person;
+import io.github.leitess.resource.dto.request.PersonDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

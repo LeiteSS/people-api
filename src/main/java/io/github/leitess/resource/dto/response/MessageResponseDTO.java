@@ -1,4 +1,4 @@
-package io.github.leitess.dto.response;
+package io.github.leitess.resource.dto.response;
 
 import lombok.Builder;
 import lombok.Data;

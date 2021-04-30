@@ -1,14 +1,16 @@
 package io.github.leitess.resource;
 
-import io.github.leitess.dto.request.PersonDTO;
-import io.github.leitess.dto.response.MessageResponseDTO;
 import io.github.leitess.exception.PersonNotFoundException;
+import io.github.leitess.resource.dto.request.PersonDTO;
+import io.github.leitess.resource.dto.response.MessageResponseDTO;
 import io.github.leitess.service.PersonService;
+import io.github.leitess.utils.PersonUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,8 +20,6 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import java.util.Collections;
 import java.util.List;
 
-import static io.github.leitess.utils.PersonUtils.createFakeDTO;
-import static io.github.leitess.utils.PersonUtils.asJsonString;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -36,6 +36,7 @@ public class PersonResourceTest {
 
     private MockMvc mockMvc;
 
+    @Autowired
     private PersonResource personResource;
 
     @Mock
@@ -52,27 +53,27 @@ public class PersonResourceTest {
 
     @Test
     void testWhenPOSTIsCalledThenAPersonShouldBeCreated() throws Exception {
-        PersonDTO expectedPersonDTO = createFakeDTO();
+        PersonDTO expectedPersonDTO = PersonUtils.createFakeDTO();
         MessageResponseDTO expectedResponseMessage = createMessageResponse("Person successfully created with ID", 1L);
 
         when(personService.createPerson(expectedPersonDTO)).thenReturn(expectedResponseMessage);
 
         mockMvc.perform(post(PEOPLE_API_URL_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(expectedPersonDTO)))
+                .content(PersonUtils.asJsonString(expectedPersonDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.message", is(expectedResponseMessage.getMessage())));
     }
 
     @Test
     void testWhenGETWithValidIsCalledThenAPersonShouldBeReturned() throws Exception {
-        var expectedValidId = 1L;
-        PersonDTO expectedPersonDTO = createFakeDTO();
-        expectedPersonDTO.setId(expectedValidId);
+        var expectedValidName = "Silas";
+        PersonDTO expectedPersonDTO = PersonUtils.createFakeDTO();
+        expectedPersonDTO.setFirstName(expectedValidName);
 
-        when(personService.findById(expectedValidId)).thenReturn(expectedPersonDTO);
+        when(personService.findByFirstName(expectedValidName)).thenReturn(expectedPersonDTO);
 
-        mockMvc.perform(get(PEOPLE_API_URL_PATH + "/" + expectedValidId)
+        mockMvc.perform(get(PEOPLE_API_URL_PATH + "/" + expectedValidName)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
@@ -82,13 +83,13 @@ public class PersonResourceTest {
 
     @Test
     void testWhenGETWithInvalidIsCalledThenAnErrorMessagenShouldBeReturned() throws Exception {
-        var expectedValidId = 1L;
-        PersonDTO expectedPersonDTO = createFakeDTO();
-        expectedPersonDTO.setId(expectedValidId);
+        var expectedValidName = "Silas";
+        PersonDTO expectedPersonDTO = PersonUtils.createFakeDTO();
+        expectedPersonDTO.setFirstName(expectedValidName);
 
-        when(personService.findById(expectedValidId)).thenThrow(PersonNotFoundException.class);
+        when(personService.findByFirstName(expectedValidName)).thenThrow(PersonNotFoundException.class);
 
-        mockMvc.perform(get(PEOPLE_API_URL_PATH + "/" + expectedValidId)
+        mockMvc.perform(get(PEOPLE_API_URL_PATH + "/" + expectedValidName)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -96,7 +97,7 @@ public class PersonResourceTest {
     @Test
     void testWhenGETIsCalledThenPeopleListShouldBeReturned() throws Exception {
         var expectedValidId = 1L;
-        PersonDTO expectedPersonDTO = createFakeDTO();
+        PersonDTO expectedPersonDTO = PersonUtils.createFakeDTO();
         expectedPersonDTO.setId(expectedValidId);
         List<PersonDTO> expectedPeopleDTOList = Collections.singletonList(expectedPersonDTO);
 
@@ -113,14 +114,14 @@ public class PersonResourceTest {
     @Test
     void testWhenPUTIsCalledThenAPersonShouldBeUpdated() throws Exception {
         var expectedValidId = 1L;
-        PersonDTO expectedPersonDTO = createFakeDTO();
+        PersonDTO expectedPersonDTO = PersonUtils.createFakeDTO();
         MessageResponseDTO expectedResponseMessage = createMessageResponse("Person successfully updated with ID", 1L);
 
         when(personService.updateById(expectedValidId, expectedPersonDTO)).thenReturn(expectedResponseMessage);
 
         mockMvc.perform(put(PEOPLE_API_URL_PATH + "/" + expectedValidId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(expectedPersonDTO)))
+                .content(PersonUtils.asJsonString(expectedPersonDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message", is(expectedResponseMessage.getMessage())));
     }

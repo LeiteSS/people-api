@@ -1,8 +1,8 @@
 package io.github.leitess.utils;
 
-import io.github.leitess.dto.request.PhoneDTO;
 import io.github.leitess.entity.Phone;
 import io.github.leitess.entity.enums.PhoneType;
+import io.github.leitess.resource.dto.request.PhoneDTO;
 
 public class PhoneUtils {
 

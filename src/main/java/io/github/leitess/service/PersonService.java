@@ -1,9 +1,9 @@
 package io.github.leitess.service;
 
-import io.github.leitess.dto.request.PersonDTO;
-import io.github.leitess.dto.response.MessageResponseDTO;
 import io.github.leitess.entity.Person;
 import io.github.leitess.exception.PersonNotFoundException;
+import io.github.leitess.resource.dto.request.PersonDTO;
+import io.github.leitess.resource.dto.response.MessageResponseDTO;
 import io.github.leitess.mapper.PersonMapper;
 import io.github.leitess.repository.PersonRepository;
 import lombok.AllArgsConstructor;
@@ -17,8 +17,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PersonService {
 
-    private PersonRepository personRepository;
-
+    private final PersonRepository personRepository;
     private final PersonMapper personMapper = PersonMapper.INSTANCE;
 
     public MessageResponseDTO createPerson(PersonDTO personDTO) {
@@ -36,10 +35,16 @@ public class PersonService {
                 .collect(Collectors.toList());
     }
 
-    public PersonDTO findById(Long id) throws PersonNotFoundException {
-        Person person = verifyIfExists(id);
+    public PersonDTO findByFirstName(String firstName) throws PersonNotFoundException {
+        Person personFounded = verifyFirstName(firstName);
 
-        return personMapper.toDTO(person);
+        return personMapper.toDTO(personFounded);
+    }
+
+    public PersonDTO findByLastName(String lastName) throws PersonNotFoundException {
+        Person personFounded = verifyLastName(lastName);
+
+        return personMapper.toDTO(personFounded);
     }
 
     public MessageResponseDTO updateById(Long id, PersonDTO personDTO) throws PersonNotFoundException {
@@ -61,6 +66,18 @@ public class PersonService {
         return personRepository
                 .findById(id)
                 .orElseThrow(() -> new PersonNotFoundException(id));
+    }
+
+    private Person verifyFirstName(String firstName) throws PersonNotFoundException {
+        return personRepository
+                .findByFirstName(firstName)
+                .orElseThrow(() -> new PersonNotFoundException(firstName));
+    }
+
+    private Person verifyLastName(String lastName) throws PersonNotFoundException {
+        return personRepository
+                .findByLastName(lastName)
+                .orElseThrow(() -> new PersonNotFoundException(lastName));
     }
 
     private MessageResponseDTO createMessageResponse(Long id, String message) {

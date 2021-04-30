@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.github.leitess.dto.request.PersonDTO;
 import io.github.leitess.entity.Person;
+import io.github.leitess.resource.dto.request.PersonDTO;
 
 import java.time.LocalDate;
 import java.util.Collections;

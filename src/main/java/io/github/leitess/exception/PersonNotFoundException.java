@@ -8,4 +8,8 @@ public class PersonNotFoundException extends Exception {
     public PersonNotFoundException(Long id) {
         super("Person not found with ID " + id);
     }
+
+    public PersonNotFoundException(String personName) {
+        super(String.format("The person %s was not found.", personName));
+    }
 }
